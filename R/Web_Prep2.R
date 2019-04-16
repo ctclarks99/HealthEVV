@@ -1,75 +1,9 @@
-# health <- sasxport.get("LLCP2017.XPT")
-# health <- health %>% mutate(ID = c(1:450016))
-# health <- health %>% filter(x.state == 18)
-#
-# indiana <- health %>% transmute(ID,Sex = sex,
-#                                 # 1 male, 2 female, 9 refused
-#                                 Education = educa,
-#                                 # 1 no school ever, 2 grade 1-8, 3 grade 9-11, 4 GED, 5 college 1-3 years, 6 college 4+ years, 9 refused
-#                                 Income = income2,# 1 less 10000, 2 less 15000, 3 less 20000, 4 less 25000,5 less 35000, 6 less 50000, 7 less 75000, 8 75000+, 77 don't know, 99 refused
-#                                 Told_Blood_Pressure_High = bphigh4,
-#                                 ## 1 yes, 2 yes during pregnancy, 3 no, 4 borderline, 7 dont know, have you ever been told your blood pressure
-#                                 High_Cholesterol = toldhi2,
-#                                 ## Have you ever been told your blood cholesterol is high,  1 yes , 2 no##
-#                                 Asthma = asthma3,
-#                                 ##Have you ever had asthma, 1 yes 2 no##
-#                                 Arthritis = havarth3,
-#                                 ##Have you ever had some form of arthritis, 1 yes 2 no##
-#                                 Depression = addepev2,
-#                                 ## Have you ever had a depressive disorder, 1 yes 2 no##
-#                                 Diabetes = diabete3,
-#                                 ## Have you ever had diabetes, 1 yes, 2 yes during pregnancy, 3 no, 4 borderline##
-#                                 overweight = x.rfbmi5,
-#                                 #1 - No, 2 - Yes
-#                                 smoker = x.smoker3,
-#                                 #1 - now smokes every day, 2 - now smokes some days, 3 - former smoker, 4 - never smoked
-#                                 binge_drinker = x.rfbing5,
-#                                 #1 - No, 2 - Yes
-#                                 imp_race = x.imprace
-#                                 #1 - white, 2 - black, 3 - asian, 4 - american indian/alaska native, 5 - hispanic
-# )
-#
-# df <- data.frame(ID = indiana$ID,
-#                  race = as.factor(indiana$imp_race),
-#                  sex = as.factor(if_else(indiana$Sex %in% c(1,2), indiana$Sex, NA_integer_)),
-#                  income = as.factor(if_else(indiana$Income %in% c(1:8), indiana$Income, NA_integer_)),
-#                  smoker = as.factor(if_else(indiana$smoker %in% c(1:4), indiana$smoker, NA_integer_)),
-#                  education = as.factor(if_else(indiana$Education %in% c(1:6), indiana$Education, NA_integer_)),
-#                  asthma = as.factor(if_else(indiana$Asthma %in% c(1,2), indiana$Asthma, NA_integer_)),
-#                  overweight = as.factor(if_else(indiana$overweight %in% c(1,2), indiana$overweight, NA_integer_)),
-#                  binge_drinker = as.factor(if_else(indiana$binge_drinker %in% c(1,2), indiana$binge_drinker, NA_integer_)),
-#                  arthritis = as.factor(if_else(indiana$Arthritis %in% c(1,2), indiana$Arthritis, NA_integer_)),
-#                  depression = as.factor(if_else(indiana$Depression %in% c(1,2), indiana$Depression, NA_integer_)),
-#                  high_cholesterol = as.factor(if_else(indiana$High_Cholesterol %in% c(1,2), indiana$High_Cholesterol, NA_integer_)),
-#                  high_blood_pressure = as.factor(if_else(indiana$Told_Blood_Pressure_High %in% c(1:4), indiana$Told_Blood_Pressure_High, NA_integer_))
-# )
-#
-# df_final <- df %>% transmute(smoke = if_else(smoker %in% c(1,2),1,0),
-#                              asthma = if_else(asthma == 1,1,0),
-#                              overweight = if_else(overweight == 2,1,0),
-#                              binge_drinker = if_else(binge_drinker == 2,1,0),
-#                              arthritis = if_else(arthritis == 1,1,0),
-#                              depression = if_else(depression == 1,1,0),
-#                              high_cholesterol = if_else(high_cholesterol == 1,1,0),
-#                              high_blood_pressure = if_else(high_blood_pressure == 1,1,0),
-#                              male = if_else(sex == 1,1,0),
-#                              white = if_else(race == 1,1,0),
-#                              black = if_else(race == 2,1,0),
-#                              asian = if_else(race == 3,1,0),
-#                              alaska_indian = if_else(race == 4,1,0),
-#                              hispanic = if_else(race == 5,1,0),
-#                              poverty = if_else(income %in% c(1:4),1,0),
-#                              upper_class = if_else(income == 8,1,0),
-#                              no_GED = if_else(education %in% c(1:3),1,0),
-#                              college = if_else(education %in% c(5:6),1,0)
-# )
-#
-# df_final <- na.exclude(df_final)
 
 #' Final Data Frame
 df_final <- read.csv(file = "data_final.csv")
 
 #' Basic Model
+#' @export
 log_model_per_person_smoke <- glm(smoke ~ male + white + black + asian + alaska_indian + hispanic + poverty + upper_class + no_GED + college,
                                   data = df_final,
                                   family = binomial(link = "logit"))
