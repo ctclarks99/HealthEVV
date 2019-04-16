@@ -1,3 +1,10 @@
+library(tidyverse)
+library(tidycensus)
+library(Hmisc)
+library(ggmap)
+library(maps)
+library(sf)
+
 # health <- sasxport.get("LLCP2017.XPT")
 # health <- health %>% mutate(ID = c(1:450016))
 # health <- health %>% filter(x.state == 18)
