@@ -1,0 +1,11 @@
+Package: HealthEVV
+Type: Package
+Title: EVPL Health Project
+Version: 0.1.0
+Author: Tyler Clark
+Maintainer: Tyler Clark <tc170@evansville.edu>
+Description: Necessary active environment for EVPL Health Project
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
