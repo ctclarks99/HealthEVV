@@ -7,5 +7,6 @@ Maintainer: Tyler Clark <tc170@evansville.edu>
 Description: Necessary active environment for EVPL Health Project
 License: What license is it under?
 Encoding: UTF-8
-LazyData: true
+LazyData: false
 RoxygenNote: 6.1.1
+Imports: tidyverse,Hmisc,maps,ggmap,sf,tidycensus
