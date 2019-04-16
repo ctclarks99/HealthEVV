@@ -1,10 +1,3 @@
-library(tidyverse)
-library(tidycensus)
-library(Hmisc)
-library(ggmap)
-library(maps)
-library(sf)
-
 # health <- sasxport.get("LLCP2017.XPT")
 # health <- health %>% mutate(ID = c(1:450016))
 # health <- health %>% filter(x.state == 18)
@@ -73,12 +66,15 @@ library(sf)
 #
 # df_final <- na.exclude(df_final)
 
+#' Final Data Frame
 df_final <- read.csv(file = "data_final.csv")
 
+#' Basic Model
 log_model_per_person_smoke <- glm(smoke ~ male + white + black + asian + alaska_indian + hispanic + poverty + upper_class + no_GED + college,
                                   data = df_final,
                                   family = binomial(link = "logit"))
-
+#' Best Smoking
+#' @export
 Best_Smoking <- glm(smoke ~ male + white + black + asian + alaska_indian + hispanic +
                       poverty + upper_class + no_GED + college + male:white + male:college +
                       white:poverty + white:upper_class + white:no_GED + white:college +
@@ -88,6 +84,8 @@ Best_Smoking <- glm(smoke ~ male + white + black + asian + alaska_indian + hispa
                     data = df_final,
                     family = binomial(link = "logit"))
 
+#' Best Asthma
+#' @export
 Best_Asthma <- glm(asthma ~ male + white + black + asian + alaska_indian + hispanic +
                      poverty + upper_class + no_GED + college + male:white + male:black +
                      white:poverty + white:upper_class + white:college + black:poverty +
@@ -96,6 +94,8 @@ Best_Asthma <- glm(asthma ~ male + white + black + asian + alaska_indian + hispa
                    data = df_final,
                    family = binomial(link = "logit"))
 
+#' Best Overweight
+#' @export
 Best_Overweight <- glm(overweight ~ male + white + asian + alaska_indian + hispanic +
                          poverty + upper_class + no_GED + college + male:white + male:hispanic +
                          male:poverty + male:upper_class + white:poverty + asian:no_GED +
@@ -104,6 +104,8 @@ Best_Overweight <- glm(overweight ~ male + white + asian + alaska_indian + hispa
                        data = df_final,
                        family = binomial(link = "logit"))
 
+#' Binge Drinking
+#' @export
 Best_Binge_Drinker <- glm(binge_drinker ~ male + white + black + asian + alaska_indian +
                             hispanic + poverty + upper_class + no_GED + college + male:alaska_indian +
                             male:college + white:no_GED + black:upper_class + asian:college +
@@ -115,6 +117,8 @@ Best_Binge_Drinker <- glm(binge_drinker ~ male + white + black + asian + alaska_
 # Best_Depression <-
 # Best_High_Cholestorol <-
 
+#' Best High Blood Pressure
+#' @export
 Best_High_Blood_Pressure <- glm(high_blood_pressure ~ male + white + black + asian + hispanic +
                                   poverty + upper_class + no_GED + college + male:black + male:hispanic +
                                   male:poverty + male:upper_class + male:college + white:poverty +
@@ -124,19 +128,28 @@ Best_High_Blood_Pressure <- glm(high_blood_pressure ~ male + white + black + asi
                                 data = df_final,
                                 family = binomial(link = "logit"))
 
-
+#' Evansville Map
 evansville <- c(left = -87.70264,
                 bottom = 37.83241,
                 right = -87.45628,
                 top = 38.20472)
 
+#' @importFrom ggmap get_map
 evv_map <- get_map(evansville, maptype = "roadmap")
-evv <- st_read("Census_Tracts.shp")
-evv <- st_transform(evv, crs = "+proj=longlat +datumWGS84 +no_defs +ellps=WGS84")
-evv <- data.frame(evv)  %>% mutate(GEOID = GEOID10)
 
+#' Reading
+evv <- sf::st_read("Census_Tracts.shp")
+#' Transform
+evv <- sf::st_transform(evv, crs = "+proj=longlat +datumWGS84 +no_defs +ellps=WGS84")
+#' Frame
+#' @importFrom dplyr %>% mutate filter select group_by left_join summarise
+evv <- data.frame(evv) %>% mutate(GEOID = GEOID10)
+
+#' Census Key
+#' @importFrom tidycensus census_api_key get_acs
 census_api_key("94bc4d9ee635889131819300fb54c51a0a92b05f", install = FALSE)
 
+#' Education Tract
 Education_tract <- data.frame(get_acs(geography = "tract",
                                       geometry = FALSE,
                                       state = "Indiana",
@@ -147,38 +160,43 @@ Education_tract <- data.frame(get_acs(geography = "tract",
                                                     Some_college_or_associates = "B06009_004",
                                                     Bachelors_degree = "B06009_005",
                                                     Professional_degree = "B06009_006"
+                                                    )
                                       )
-)
-)
-
+                              )
+#` Sorting Education Data
 No_GED <- Education_tract %>%
   filter(variable == "No_GED") %>%
   select(GEOID, no_GED = estimate)
 
+#` High School
 High_School <- Education_tract %>%
   filter(variable == "High_School_Grad") %>%
   select(GEOID, high_school_grad = estimate)
 
+#` College
 College <- Education_tract %>%
   filter(variable %in% c("Some_college_or_associates", "Bachelors_degree", "Professional_degree")) %>%
   group_by(GEOID) %>%
   summarise(college = sum(estimate))
 
+#` Full Census
 Census_data <- No_GED %>%
   left_join(High_School, by = "GEOID") %>%
   left_join(College, by = "GEOID")
 
+#` Sex Data
 Sex_tract <- data.frame(get_acs(geography = "tract",
                                 geometry = FALSE,
                                 state = "Indiana",
                                 county = "163",
                                 variables = c(Males = "B01001_002")
-)
-) %>% select(GEOID, males = estimate)
-
+                                )
+                        ) %>% select(GEOID, males = estimate)
+#` Joining Sex
 Census_data <- Census_data %>% left_join(Sex_tract, by = "GEOID")
 
-Income_tract <- data.frame(get_acs(geography = "tract",
+#` Income Data
+Income_tract <- data.frame(tidycensus::get_acs(geography = "tract",
                                    geometry = FALSE,
                                    state = "Indiana",
                                    county = "163",
@@ -198,30 +216,35 @@ Income_tract <- data.frame(get_acs(geography = "tract",
                                                  income_125_150 = "B19001_015",
                                                  income_150_200 = "B19001_016",
                                                  income_200_up = "B19001_017"
+                                                 )
                                    )
-)
-)
-
+                           )
+#` Poverty
 Poverty <- Income_tract %>%
   filter(variable %in% c("income_00_10", "income_10_15", "income_15_20", "income_20_25")) %>%
   group_by(GEOID) %>%
   summarise(poverty = sum(estimate))
 
+#` Middle Class
 Middle_Class <- Income_tract %>% filter(variable %in% c("income_25_30","income_30_35","income_35_40","income_40_45","income_45_50","income_50_55","income_55_60","income_60_65","income_65_70","income_70_75")) %>%
   group_by(GEOID) %>%
   summarise(middle_class = sum(estimate))
 
+#` Upper Class
 Upper_Class <- Income_tract %>% filter(variable %in% c("income_75_100","income_100_125","income_125_150","income_150_200","income_200_up")) %>%
   group_by(GEOID) %>%
   summarise(upper_class = sum(estimate))
 
+#` Census Join Income
 Census_data <- Census_data %>%
   left_join(Poverty, by = "GEOID") %>%
   left_join(Middle_Class, by = "GEOID") %>%
   left_join(Upper_Class, by = "GEOID")
 
+#` Final Data Frame
 eville <- evv %>% left_join(Census_data, by = "GEOID")
 
+#` Convert Census Data
 eville <- eville %>% mutate(white = White_NH / Pop_18_and,
                             black = Black_NH / Pop_18_and,
                             asian = Asian_NH / Pop_18_and,
@@ -235,6 +258,7 @@ eville <- eville %>% mutate(white = White_NH / Pop_18_and,
                             high_school = high_school_grad / Pop_18_and,
                             college = college / Pop_18_and)
 
+#` Predictions
 eville <- eville %>% mutate(Proportion_Smokers = predict.glm(Best_Smoking, newdata = eville, type = "response"),
                             Predicted_Number_Smokers = predict.glm(Best_Smoking, newdata = eville, type = "response") * Pop_18_and,
                             Difference_From_Average_Smokers = predict.glm(Best_Smoking, newdata = eville, type = "response") - .20139,#NOT ACCURATE

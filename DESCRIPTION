@@ -5,7 +5,14 @@ Version: 0.1.5
 Author: Tyler Clark
 Maintainer: Tyler Clark <tc170@evansville.edu>
 Description: Necessary active environment for EVPL Health Project
-License: What license is it under?
+Imports: 
+    Hmisc,
+    dplyr,
+    ggplot2,
+    tidycensus,
+    ggmap,
+    maps
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
