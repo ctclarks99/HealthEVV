@@ -97,28 +97,28 @@ Education_tract <- data.frame(get_acs(geography = "tract",
                                                     )
                                       )
                               )
-#` Sorting Education Data
+#' Sorting Education Data
 No_GED <- Education_tract %>%
   filter(variable == "No_GED") %>%
   select(GEOID, no_GED = estimate)
 
-#` High School
+#' High School
 High_School <- Education_tract %>%
   filter(variable == "High_School_Grad") %>%
   select(GEOID, high_school_grad = estimate)
 
-#` College
+#' College
 College <- Education_tract %>%
   filter(variable %in% c("Some_college_or_associates", "Bachelors_degree", "Professional_degree")) %>%
   group_by(GEOID) %>%
   summarise(college = sum(estimate))
 
-#` Full Census
+#' Full Census
 Census_data <- No_GED %>%
   left_join(High_School, by = "GEOID") %>%
   left_join(College, by = "GEOID")
 
-#` Sex Data
+#' Sex Data
 Sex_tract <- data.frame(get_acs(geography = "tract",
                                 geometry = FALSE,
                                 state = "Indiana",
@@ -126,10 +126,10 @@ Sex_tract <- data.frame(get_acs(geography = "tract",
                                 variables = c(Males = "B01001_002")
                                 )
                         ) %>% select(GEOID, males = estimate)
-#` Joining Sex
+#' Joining Sex
 Census_data <- Census_data %>% left_join(Sex_tract, by = "GEOID")
 
-#` Income Data
+#' Income Data
 Income_tract <- data.frame(tidycensus::get_acs(geography = "tract",
                                    geometry = FALSE,
                                    state = "Indiana",
@@ -153,32 +153,32 @@ Income_tract <- data.frame(tidycensus::get_acs(geography = "tract",
                                                  )
                                    )
                            )
-#` Poverty
+#' Poverty
 Poverty <- Income_tract %>%
   filter(variable %in% c("income_00_10", "income_10_15", "income_15_20", "income_20_25")) %>%
   group_by(GEOID) %>%
   summarise(poverty = sum(estimate))
 
-#` Middle Class
+#' Middle Class
 Middle_Class <- Income_tract %>% filter(variable %in% c("income_25_30","income_30_35","income_35_40","income_40_45","income_45_50","income_50_55","income_55_60","income_60_65","income_65_70","income_70_75")) %>%
   group_by(GEOID) %>%
   summarise(middle_class = sum(estimate))
 
-#` Upper Class
+#' Upper Class
 Upper_Class <- Income_tract %>% filter(variable %in% c("income_75_100","income_100_125","income_125_150","income_150_200","income_200_up")) %>%
   group_by(GEOID) %>%
   summarise(upper_class = sum(estimate))
 
-#` Census Join Income
+#' Census Join Income
 Census_data <- Census_data %>%
   left_join(Poverty, by = "GEOID") %>%
   left_join(Middle_Class, by = "GEOID") %>%
   left_join(Upper_Class, by = "GEOID")
 
-#` Final Data Frame
+#' Final Data Frame
 eville <- evv %>% left_join(Census_data, by = "GEOID")
 
-#` Convert Census Data
+#' Convert Census Data
 eville <- eville %>% mutate(white = White_NH / Pop_18_and,
                             black = Black_NH / Pop_18_and,
                             asian = Asian_NH / Pop_18_and,
@@ -192,7 +192,7 @@ eville <- eville %>% mutate(white = White_NH / Pop_18_and,
                             high_school = high_school_grad / Pop_18_and,
                             college = college / Pop_18_and)
 
-#` Predictions
+#' Predictions
 eville <- eville %>% mutate(Proportion_Smokers = predict.glm(Best_Smoking, newdata = eville, type = "response"),
                             Predicted_Number_Smokers = predict.glm(Best_Smoking, newdata = eville, type = "response") * Pop_18_and,
                             Difference_From_Average_Smokers = predict.glm(Best_Smoking, newdata = eville, type = "response") - .20139,#NOT ACCURATE
@@ -200,13 +200,13 @@ eville <- eville %>% mutate(Proportion_Smokers = predict.glm(Best_Smoking, newda
                             Predicted_Number_Overweight = predict.glm(Best_Overweight, newdata = eville, type = "response") * Pop_18_and,
                             Difference_From_Average_Overweight = predict.glm(Best_Overweight, newdata = eville, type = "response") - .70706)
 
-#` Find correct ggplot to return
-#`
-#` Returns ggplot
-#` @param input1 Selected response from shiny UI
-#` @param input2 Selected plot type from shiny UI
-#` @return correct ggplot
-#` @export
+#' Find correct ggplot to return
+#'
+#' Returns ggplot
+#' @param input1 Selected response from shiny UI
+#' @param input2 Selected plot type from shiny UI
+#' @return correct ggplot
+#' @export
 prediction_map <- function(input1,input2) {
   if(input1 == "Smoking" & input2 == "Predicted Proportion") { return(ggmap(evv_map) +
                                                                         geom_sf(aes(fill = Proportion_Smokers),
