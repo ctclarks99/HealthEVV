@@ -1,5 +1,6 @@
 
 #' Final Data Frame
+#' @export
 df_final <- read.csv(file = "data_final.csv")
 
 #' Basic Model
