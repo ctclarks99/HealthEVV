@@ -12,7 +12,7 @@ Imports:
     tidycensus,
     ggmap,
     maps
-License: GPL-3
+License: GPL-2
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
