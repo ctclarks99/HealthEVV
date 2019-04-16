@@ -1,7 +1,7 @@
 Package: HealthEVV
 Type: Package
 Title: EVPL Health Project
-Version: 0.1.0
+Version: 0.1.5
 Author: Tyler Clark
 Maintainer: Tyler Clark <tc170@evansville.edu>
 Description: Necessary active environment for EVPL Health Project
