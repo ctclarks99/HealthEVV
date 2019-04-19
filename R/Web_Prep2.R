@@ -58,7 +58,7 @@ Best_Depression <- glm(depression ~ male + white + black + asian + hispanic + po
 
 #' High Cholestorol
 #' @export
-Best_High_Cholestorol <- glm(high_cholesterol ~ male + white + black + asian + alaska_indian +
+Best_High_Cholesterol <- glm(high_cholesterol ~ male + white + black + asian + alaska_indian +
                                poverty + upper_class + no_GED + college + young + older +
                                male_upper_class + white_poverty + black_older + poverty_older,
                              data = df_final,
@@ -81,7 +81,7 @@ Best_Diabetes <- glm(diabetic ~ male + white + black + other_race + poverty + up
 
 #' Angina or Coronary
 #' @export
-Best_Angina_Coronary <- glm(angina_coronary ~ male + white + black + other_race + poverty +
+Best_Angina_Coronary <- glm(angina ~ male + white + black + other_race + poverty +
                               upper_class + no_GED + college + young + older + black_older + poverty_older,
                             data = df_final,
                             family = binomial(link = "logit"))
@@ -92,13 +92,15 @@ evansville <- c(left = -87.70264,
                 right = -87.45628,
                 top = 38.20472)
 
+#' Get Map
 #' @importFrom ggmap get_map
 evv_map <- get_map(evansville, maptype = "roadmap")
 
 #' Reading
-evv <- sf::st_read("Census_Tracts.shp")
+#' @importFrom sf st_read st_transform
+evv <- st_read("Census_Tracts.shp")
 #' Transform
-evv <- sf::st_transform(evv, crs = "+proj=longlat +datumWGS84 +no_defs +ellps=WGS84")
+evv <- st_transform(evv, crs = "+proj=longlat +datumWGS84 +no_defs +ellps=WGS84")
 #' Frame
 #' @importFrom dplyr filter select group_by left_join summarise
 evv <- data.frame(evv) %>% mutate(GEOID = GEOID10)
@@ -199,6 +201,102 @@ Census_data <- Census_data %>%
   left_join(Middle_Class, by = "GEOID") %>%
   left_join(Upper_Class, by = "GEOID")
 
+#' Age Data
+Age_data <- data.frame(get_acs(geography = "tract",
+                               geometry = FALSE,
+                               state = "Indiana",
+                               county = "163",
+                               variables = c(Male_Age_18_19 = "B01001_007",
+                                             Male_Age_20 = "B01001_008",
+                                             Male_Age_21 = "B01001_009",
+                                             Male_Age_22_24 = "B01001_010",
+                                             Male_Age_25_29 = "B01001_011",
+                                             Male_Age_30_34 = "B01001_012",
+                                             Male_Age_35_39 = "B01001_013",
+                                             Male_Age_40_44 = "B01001_014",
+                                             Male_Age_45_49 = "B01001_015",
+                                             Male_Age_50_54 = "B01001_016",
+                                             Male_Age_55_59 = "B01001_017",
+                                             Male_Age_60_61 = "B01001_018",
+                                             Male_Age_62_64 = "B01001_019",
+                                             Male_Age_65_66 = "B01001_020",
+                                             Male_Age_67_69 = "B01001_021",
+                                             Male_Age_70_74 = "B01001_022",
+                                             Male_Age_75_79 = "B01001_023",
+                                             Male_Age_80_84 = "B01001_024",
+                                             Male_Age_85_over = "B01001_025",
+                                             Female_Age_18_19 = "B01001_031",
+                                             Female_Age_20 = "B01001_032",
+                                             Female_Age_21 = "B01001_033",
+                                             Female_Age_22_24 = "B01001_034",
+                                             Female_Age_25_29 = "B01001_035",
+                                             Female_Age_30_34 = "B01001_036",
+                                             Female_Age_35_39 = "B01001_037",
+                                             Female_Age_40_44 = "B01001_038",
+                                             Female_Age_45_49 = "B01001_039",
+                                             Female_Age_50_54 = "B01001_040",
+                                             Female_Age_55_59 = "B01001_041",
+                                             Female_Age_60_61 = "B01001_042",
+                                             Female_Age_62_64 = "B01001_043",
+                                             Female_Age_65_66 = "B01001_044",
+                                             Female_Age_67_69 = "B01001_045",
+                                             Female_Age_70_74 = "B01001_046",
+                                             Female_Age_75_79 = "B01001_047",
+                                             Female_Age_80_84 = "B01001_048",
+                                             Female_Age_85_over = "B01001_049"
+                               )
+)
+)
+
+#' Young
+Young <- Age_data %>%
+  filter(
+    variable %in% c(
+      "Male_Age_18_19",
+      "Female_Age_18_19",
+      "Male_Age_20",
+      "Female_Age_20",
+      "Male_Age_21",
+      "Female_Age_21",
+      "Male_Age_22_24",
+      "Female_Age_22_24",
+      "Male_Age_25_29",
+      "Female_Age_25_29",
+      "Male_Age_30_34",
+      "Female_Age_30_34")
+  ) %>%
+  group_by(GEOID) %>%
+  summarise(young = sum(estimate))
+
+#' Older
+Older <- Age_data %>%
+  filter(
+    variable %in% c(
+      "Male_Age_55_59",
+      "Female_Age_55_59",
+      "Male_Age_60_61",
+      "Female_Age_60_61",
+      "Male_Age_62_64",
+      "Female_Age_62_64",
+      "Male_Age_65_66",
+      "Female_Age_65_66",
+      "Male_Age_67_69",
+      "Female_Age_67_69",
+      "Male_Age_70_74",
+      "Female_Age_70_74",
+      "Male_Age_75_79",
+      "Female_Age_75_79",
+      "Male_Age_80_84",
+      "Female_Age_80_84",
+      "Male_Age_85_over",
+      "Female_Age_85_over")
+  ) %>%
+  group_by(GEOID) %>%
+  summarise(older = sum(estimate))
+
+#' Join Census and Age Data
+Census_data <- Census_data %>% left_join(Young, by = "GEOID") %>% left_join(Older, by = "GEOID")
+
 #' Interactions
 Interactions <- data.frame(get_acs(geography = "tract",
                                    geometry = FALSE,
@@ -294,7 +392,7 @@ Male_Upper_Class <- Interactions %>%
   summarise(male_upper_class = sum(estimate))
 
 #' Census Interaction Join
-ensus_data <- Census_data %>%
+Census_data <- Census_data %>%
   left_join(White_Poverty, by = "GEOID") %>%
   left_join(Black_Older, by = "GEOID") %>%
   left_join(Poverty_Older, by = "GEOID") %>%
@@ -303,7 +401,7 @@ ensus_data <- Census_data %>%
   left_join(Male_Upper_Class, by = "GEOID")
 
 #' Final Data Frame
-eville <- evv %>% left_join(Census_data, by = "GEOID")
+eville <- evv %>% mutate(GEOID = as.character(GEOID)) %>% left_join(Census_data, by = "GEOID")
 
 #' Convert Census Data
 eville <- eville %>% mutate(white = White_NH / Pop_18_and,
@@ -317,7 +415,9 @@ eville <- eville %>% mutate(white = White_NH / Pop_18_and,
                             upper_class = upper_class / Pop_18_and,
                             no_GED = no_GED / Pop_18_and,
                             high_school = high_school_grad / Pop_18_and,
-                            college = college / Pop_18_and)
+                            college = college / Pop_18_and,
+                            young = young / Pop_18_and,
+                            older = older / Pop_18_and)
 
 #' Prediction Values
 #' @export
@@ -335,7 +435,7 @@ eville <- eville %>% mutate(Proportion_Smokers = predict.glm(Best_Smoking, newda
                             Difference_From_Average_Binge = predict.glm(Best_Binge_Drinker, newdata = eville, type = "response") - mean(df_final$binge_drinker),
                             Proportion_Arthritis = predict.glm(Best_Arthritis, newdata = eville, type = "response"),
                             Predicted_Number_Arthritis = predict.glm(Best_Arthritis, newdata = eville, type = "response") * Pop_18_and,
-                            Difference_From_Average_Arthritis = predict.glm(Best_Arthritis, newdata = eville, type = "response") - mean(df_final$Arthritis),
+                            Difference_From_Average_Arthritis = predict.glm(Best_Arthritis, newdata = eville, type = "response") - mean(df_final$arthritis),
                             Proportion_High_BP = predict.glm(Best_High_Blood_Pressure, newdata = eville, type = "response"),
                             Predicted_Number_High_BP = predict.glm(Best_High_Blood_Pressure, newdata = eville, type = "response") * Pop_18_and,
                             Difference_From_Average_High_BP = predict.glm(Best_High_Blood_Pressure, newdata = eville, type = "response") - mean(df_final$high_blood_pressure),
@@ -347,7 +447,7 @@ eville <- eville %>% mutate(Proportion_Smokers = predict.glm(Best_Smoking, newda
                             Difference_From_Average_Depression = predict.glm(Best_Depression, newdata = eville, type = "response") - mean(df_final$depression),
                             Proportion_Diabetes = predict.glm(Best_Diabetes, newdata = eville, type = "response"),
                             Predicted_Number_Diabetes = predict.glm(Best_Diabetes, newdata = eville, type = "response") * Pop_18_and,
-                            Difference_From_Average_Diabetes = predict.glm(Best_Diabetes, newdata = eville, type = "response") - mean(df_final$diabetes),
+                            Difference_From_Average_Diabetes = predict.glm(Best_Diabetes, newdata = eville, type = "response") - mean(df_final$diabetic),
                             Proportion_High_Cholesterol = predict.glm(Best_High_Cholesterol, newdata = eville, type = "response"),
                             Predicted_Number_High_Cholesterol = predict.glm(Best_High_Cholesterol, newdata = eville, type = "response") * Pop_18_and,
                             Difference_From_Average_High_Cholesterol = predict.glm(Best_High_Cholesterol, newdata = eville, type = "response") - mean(df_final$high_cholesterol))
