@@ -461,7 +461,6 @@ eville <- eville %>% mutate(Proportion_Smokers = predict.glm(Best_Smoking, newda
 #' @return correct ggplot
 #' @export
 #' @importFrom ggplot2 scale_fill_viridis_c ggtitle theme
-#' @importFrom ggmap ggmap
 prediction_map <- function(input1,input2) {
   if(input1 == "Smoking" & input2 == "Predicted Proportion") { return(ggmap(evv_map) +
                                                                         geom_sf(aes(fill = Proportion_Smokers, geometry = geometry),
