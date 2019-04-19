@@ -4,8 +4,12 @@
 \name{Census_data}
 \alias{Census_data}
 \title{Full Census}
-\format{An object of class \code{data.frame} with 49 rows and 8 columns.}
+\format{An object of class \code{data.frame} with 49 rows and 16 columns.}
 \usage{
+Census_data
+
+Census_data
+
 Census_data
 
 Census_data
@@ -18,5 +22,9 @@ Full Census
 Joining Sex
 
 Census Join Income
+
+Join Census and Age Data
+
+Census Interaction Join
 }
 \keyword{datasets}

@@ -4,7 +4,7 @@
 \name{df_final}
 \alias{df_final}
 \title{Final Data Frame}
-\format{An object of class \code{data.frame} with 10280 rows and 19 columns.}
+\format{An object of class \code{data.frame} with 10189 rows and 30 columns.}
 \usage{
 df_final
 }

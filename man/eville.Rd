@@ -4,7 +4,7 @@
 \name{eville}
 \alias{eville}
 \title{Final Data Frame}
-\format{An object of class \code{data.frame} with 49 rows and 74 columns.}
+\format{An object of class \code{data.frame} with 49 rows and 106 columns.}
 \usage{
 eville
 
@@ -17,6 +17,6 @@ Final Data Frame
 
 Convert Census Data
 
-Predictions
+Prediction Values
 }
 \keyword{datasets}

@@ -1,67 +1,90 @@
-
 #' Final Data Frame
 #' @export
-df_final <- read.csv(file = "data_final.csv")
+#' @importFrom dplyr %>% mutate
+df_final <- read.csv(file = "data_final.csv") %>% mutate(white_poverty = white*poverty,
+                                                         black_older = black*older,
+                                                         poverty_older = poverty*older,
+                                                         poverty_young = poverty*young,
+                                                         hispanic_older = hispanic*older,
+                                                         male_upper_class = male*upper_class)
 
-#' Basic Model
-#' @export
-log_model_per_person_smoke <- glm(smoke ~ male + white + black + asian + alaska_indian + hispanic + poverty + upper_class + no_GED + college,
-                                  data = df_final,
-                                  family = binomial(link = "logit"))
 #' Best Smoking
 #' @export
 Best_Smoking <- glm(smoke ~ male + white + black + asian + alaska_indian + hispanic +
-                      poverty + upper_class + no_GED + college + male:white + male:college +
-                      white:poverty + white:upper_class + white:no_GED + white:college +
-                      black:poverty + black:college + alaska_indian:upper_class +
-                      alaska_indian:no_GED + alaska_indian:college + hispanic:college +
-                      upper_class:college,
+                      poverty + upper_class + no_GED + college + young + older +
+                      white_poverty + black_older + hispanic_older,
                     data = df_final,
                     family = binomial(link = "logit"))
 
 #' Best Asthma
 #' @export
 Best_Asthma <- glm(asthma ~ male + white + black + asian + alaska_indian + hispanic +
-                     poverty + upper_class + no_GED + college + male:white + male:black +
-                     white:poverty + white:upper_class + white:college + black:poverty +
-                     black:upper_class + black:no_GED + alaska_indian:poverty +
-                     hispanic:no_GED + hispanic:college,
+                    poverty + upper_class + no_GED + college + young + older +
+                    black_older + hispanic_older + poverty_older,
                    data = df_final,
                    family = binomial(link = "logit"))
 
 #' Best Overweight
 #' @export
-Best_Overweight <- glm(overweight ~ male + white + asian + alaska_indian + hispanic +
-                         poverty + upper_class + no_GED + college + male:white + male:hispanic +
-                         male:poverty + male:upper_class + white:poverty + asian:no_GED +
-                         alaska_indian:poverty + alaska_indian:upper_class + hispanic:poverty +
-                         hispanic:college + poverty:no_GED + poverty:college,
+Best_Overweight <- glm(overweight ~ male + white + black + asian + alaska_indian + hispanic +
+                        poverty + upper_class + no_GED + college + young + older +
+                        male_upper_class + poverty_older,
                        data = df_final,
                        family = binomial(link = "logit"))
 
 #' Binge Drinking
 #' @export
 Best_Binge_Drinker <- glm(binge_drinker ~ male + white + black + asian + alaska_indian +
-                            hispanic + poverty + upper_class + no_GED + college + male:alaska_indian +
-                            male:college + white:no_GED + black:upper_class + asian:college +
-                            hispanic:no_GED + upper_class:no_GED + white:poverty + poverty:no_GED,
+                            hispanic + poverty + upper_class + no_GED + college + young +
+                            older + black_older + hispanic_older + poverty_young,
                           data = df_final,
                           family = binomial(link = "logit"))
 
-# Best_Arthritis <-
-# Best_Depression <-
-# Best_High_Cholestorol <-
+#' Arthritis
+#' @export
+Best_Arthritis <- glm(arthritis ~ male + white + black + asian + alaska_indian + hispanic +
+                        poverty + upper_class + no_GED + college + young + older + male_upper_class +
+                        white_poverty + black_older + hispanic_older + poverty_young + poverty_older,
+                      data = df_final,
+                      family = binomial(link = "logit"))
+
+#' Depression
+#' @export
+Best_Depression <- glm(depression ~ male + white + black + asian + hispanic + poverty +
+                         upper_class + no_GED + college + young + older + white_poverty +
+                         black_older + hispanic_older + poverty_young,
+                       data = df_final,
+                       family = binomial(link = "logit"))
+
+#' High Cholestorol
+#' @export
+Best_High_Cholestorol <- glm(high_cholesterol ~ male + white + black + asian + alaska_indian +
+                               poverty + upper_class + no_GED + college + young + older +
+                               male_upper_class + white_poverty + black_older + poverty_older,
+                             data = df_final,
+                             family = binomial(link = "logit"))
 
 #' Best High Blood Pressure
 #' @export
-Best_High_Blood_Pressure <- glm(high_blood_pressure ~ male + white + black + asian + hispanic +
-                                  poverty + upper_class + no_GED + college + male:black + male:hispanic +
-                                  male:poverty + male:upper_class + male:college + white:poverty +
-                                  white:no_GED + asian:poverty + asian:upper_class + asian:college +
-                                  hispanic:upper_class + hispanic:no_GED + poverty:no_GED +
-                                  upper_class:no_GED,
+Best_High_Blood_Pressure <- glm(high_blood_pressure ~ male + white + black + asian + alaska_indian +
+                                  hispanic + poverty + upper_class + no_GED + college + young +
+                                  older + male_upper_class + white_poverty,
                                 data = df_final,
                                 family = binomial(link = "logit"))
+
+#' Diabetes
+#' @export
+Best_Diabetes <- glm(diabetic ~ male + white + black + other_race + poverty + upper_class +
+                       no_GED + college + young + older + male_upper_class + white_poverty + poverty_young + poverty_older,
+                     data = df_final,
+                     family = binomial(link = "logit"))
+
+#' Angina or Coronary
+#' @export
+Best_Angina_Coronary <- glm(angina_coronary ~ male + white + black + other_race + poverty +
+                              upper_class + no_GED + college + young + older + black_older + poverty_older,
+                            data = df_final,
+                            family = binomial(link = "logit"))
 
 #' Evansville Map
 evansville <- c(left = -87.70264,
@@ -77,7 +100,7 @@ evv <- sf::st_read("Census_Tracts.shp")
 #' Transform
 evv <- sf::st_transform(evv, crs = "+proj=longlat +datumWGS84 +no_defs +ellps=WGS84")
 #' Frame
-#' @importFrom dplyr %>% mutate filter select group_by left_join summarise
+#' @importFrom dplyr filter select group_by left_join summarise
 evv <- data.frame(evv) %>% mutate(GEOID = GEOID10)
 
 #' Census Key
@@ -131,7 +154,7 @@ Sex_tract <- data.frame(get_acs(geography = "tract",
 Census_data <- Census_data %>% left_join(Sex_tract, by = "GEOID")
 
 #' Income Data
-Income_tract <- data.frame(tidycensus::get_acs(geography = "tract",
+Income_tract <- data.frame(get_acs(geography = "tract",
                                    geometry = FALSE,
                                    state = "Indiana",
                                    county = "163",
@@ -176,6 +199,109 @@ Census_data <- Census_data %>%
   left_join(Middle_Class, by = "GEOID") %>%
   left_join(Upper_Class, by = "GEOID")
 
+#' Interactions
+Interactions <- data.frame(get_acs(geography = "tract",
+                                   geometry = FALSE,
+                                   state = "Indiana",
+                                   county = "163",
+                                   variables = c(White_Below_Poverty = "B17020A_002",
+                                                 Black_Male_55_64 = "B01001B_013",
+                                                 Black_Male_65_74 = "B01001B_014",
+                                                 Black_Male_75_84 = "B01001B_015",
+                                                 Black_Male_85_over = "B01001B_016",
+                                                 Black_Female_55_64 = "B01001B_028",
+                                                 Black_Female_65_74 = "B01001B_029",
+                                                 Black_Female_75_84 = "B01001B_030",
+                                                 Black_Female_85_over = "B01001B_031",
+                                                 Male_Poverty_18_24 = "B17001_010",
+                                                 Male_Poverty_25_34 = "B17001_011",
+                                                 Female_Poverty_18_24 = "B17001_024",
+                                                 Female_Poverty_25_34 = "B17001_025",
+                                                 Male_Poverty_55_64 = "B17001_014",
+                                                 Male_Poverty_65_74 = "B17001_015",
+                                                 Male_Poverty_75_over = "B17001_016",
+                                                 Female_Poverty_55_64 = "B17001_028",
+                                                 Female_Poverty_65_74 = "B17001_029",
+                                                 Female_Poverty_75_over = "B17001_030",
+                                                 Hispanic_Male_55_64 = "B01001I_013",
+                                                 Hispanic_Male_65_74 = "B01001I_014",
+                                                 Hispanic_Male_75_84 = "B01001I_015",
+                                                 Hispanic_Male_85_over = "B01001I_016",
+                                                 Hispanic_Female_55_64 = "B01001I_028",
+                                                 Hispanic_Female_65_74 = "B01001I_029",
+                                                 Hispanic_Female_75_84 = "B01001I_030",
+                                                 Hispanic_Female_85_over = "B01001I_031",
+                                                 Male_Income_75_100 = "B20001_021",
+                                                 Male_Income_100_over = "B20001_022")
+)
+)
+
+#' White Poverty Interaction
+White_Poverty <- Interactions %>%
+  filter(variable == "White_Below_Poverty") %>%
+  select(GEOID, white_poverty = estimate)
+
+#' Black Older Interaction
+Black_Older <- Interactions %>%
+  filter(variable %in% c("Black_Male_55_64",
+                         "Black_Female_55_64",
+                         "Black_Male_65_74",
+                         "Black_Female_65_74",
+                         "Black_Male_75_84",
+                         "Black_Female_75_84",
+                         "Black_Male_85_over",
+                         "Black_Female_85_over")) %>%
+  group_by(GEOID) %>%
+  summarise(black_older = sum(estimate))
+
+#' Povery Older Interaction
+Poverty_Older <- Interactions %>%
+  filter(variable %in% c("Male_Poverty_55_64",
+                         "Female_Poverty_55_64",
+                         "Male_Poverty_65_74",
+                         "Female_Poverty_65_74",
+                         "Male_Poverty_75_over",
+                         "Female_Poverty_75_over")) %>%
+  group_by(GEOID) %>%
+  summarise(poverty_older = sum(estimate))
+
+#' Hispanic Older Interaction
+Hispanic_Older <- Interactions %>%
+  filter(variable %in% c("Hispanic_Male_55_64",
+                         "Hispanic_Female_55_64",
+                         "Hispanic_Male_65_74",
+                         "Hispanic_Female_65_74",
+                         "Hispanic_Male_75_84",
+                         "Hispanic_Female_75_84",
+                         "Hispanic_Male_85_over",
+                         "Hispanic_Female_85_over")) %>%
+  group_by(GEOID) %>%
+  summarise(hispanic_older = sum(estimate))
+
+#' Poverty Young Interaction
+Poverty_Young <- Interactions %>%
+  filter(variable %in% c("Male_Poverty_18_24",
+                         "Female_Poverty_18_24",
+                         "Male_Poverty_25_34",
+                         "Female_Poverty_25_34")) %>%
+  group_by(GEOID) %>%
+  summarise(poverty_young = sum(estimate))
+
+#' Male Upper Class Interaction
+Male_Upper_Class <- Interactions %>%
+  filter(variable %in% c("Male_Income_75_100","Male_Income_100_over")) %>%
+  group_by(GEOID) %>%
+  summarise(male_upper_class = sum(estimate))
+
+#' Census Interaction Join
+ensus_data <- Census_data %>%
+  left_join(White_Poverty, by = "GEOID") %>%
+  left_join(Black_Older, by = "GEOID") %>%
+  left_join(Poverty_Older, by = "GEOID") %>%
+  left_join(Hispanic_Older, by = "GEOID") %>%
+  left_join(Poverty_Young, by = "GEOID") %>%
+  left_join(Male_Upper_Class, by = "GEOID")
+
 #' Final Data Frame
 eville <- evv %>% left_join(Census_data, by = "GEOID")
 
@@ -193,13 +319,39 @@ eville <- eville %>% mutate(white = White_NH / Pop_18_and,
                             high_school = high_school_grad / Pop_18_and,
                             college = college / Pop_18_and)
 
-#' Predictions
+#' Prediction Values
+#' @export
 eville <- eville %>% mutate(Proportion_Smokers = predict.glm(Best_Smoking, newdata = eville, type = "response"),
                             Predicted_Number_Smokers = predict.glm(Best_Smoking, newdata = eville, type = "response") * Pop_18_and,
-                            Difference_From_Average_Smokers = predict.glm(Best_Smoking, newdata = eville, type = "response") - .20139,#NOT ACCURATE
+                            Difference_From_Average_Smokers = predict.glm(Best_Smoking, newdata = eville, type = "response") - mean(df_final$smoke),
                             Proportion_Overweight = predict.glm(Best_Overweight, newdata = eville, type = "response"),
                             Predicted_Number_Overweight = predict.glm(Best_Overweight, newdata = eville, type = "response") * Pop_18_and,
-                            Difference_From_Average_Overweight = predict.glm(Best_Overweight, newdata = eville, type = "response") - .70706)
+                            Difference_From_Average_Overweight = predict.glm(Best_Overweight, newdata = eville, type = "response") - mean(df_final$overweight),
+                            Proportion_Asthma = predict.glm(Best_Asthma, newdata = eville, type = "response"),
+                            Predicted_Number_Asthma = predict.glm(Best_Asthma, newdata = eville, type = "response") * Pop_18_and,
+                            Difference_From_Average_Asthma = predict.glm(Best_Asthma, newdata = eville, type = "response") - mean(df_final$asthma),
+                            Proportion_Binge = predict.glm(Best_Binge_Drinker, newdata = eville, type = "response"),
+                            Predicted_Number_Binge = predict.glm(Best_Binge_Drinker, newdata = eville, type = "response") * Pop_18_and,
+                            Difference_From_Average_Binge = predict.glm(Best_Binge_Drinker, newdata = eville, type = "response") - mean(df_final$binge_drinker),
+                            Proportion_Arthritis = predict.glm(Best_Arthritis, newdata = eville, type = "response"),
+                            Predicted_Number_Arthritis = predict.glm(Best_Arthritis, newdata = eville, type = "response") * Pop_18_and,
+                            Difference_From_Average_Arthritis = predict.glm(Best_Arthritis, newdata = eville, type = "response") - mean(df_final$Arthritis),
+                            Proportion_High_BP = predict.glm(Best_High_Blood_Pressure, newdata = eville, type = "response"),
+                            Predicted_Number_High_BP = predict.glm(Best_High_Blood_Pressure, newdata = eville, type = "response") * Pop_18_and,
+                            Difference_From_Average_High_BP = predict.glm(Best_High_Blood_Pressure, newdata = eville, type = "response") - mean(df_final$high_blood_pressure),
+                            Proportion_Angina = predict.glm(Best_Angina_Coronary, newdata = eville, type = "response"),
+                            Predicted_Number_Angina = predict.glm(Best_Angina_Coronary, newdata = eville, type = "response") * Pop_18_and,
+                            Difference_From_Average_Angina = predict.glm(Best_Angina_Coronary, newdata = eville, type = "response") - mean(df_final$angina),
+                            Proportion_Depression = predict.glm(Best_Depression, newdata = eville, type = "response"),
+                            Predicted_Number_Depression = predict.glm(Best_Depression, newdata = eville, type = "response") * Pop_18_and,
+                            Difference_From_Average_Depression = predict.glm(Best_Depression, newdata = eville, type = "response") - mean(df_final$depression),
+                            Proportion_Diabetes = predict.glm(Best_Diabetes, newdata = eville, type = "response"),
+                            Predicted_Number_Diabetes = predict.glm(Best_Diabetes, newdata = eville, type = "response") * Pop_18_and,
+                            Difference_From_Average_Diabetes = predict.glm(Best_Diabetes, newdata = eville, type = "response") - mean(df_final$diabetes),
+                            Proportion_High_Cholesterol = predict.glm(Best_High_Cholesterol, newdata = eville, type = "response"),
+                            Predicted_Number_High_Cholesterol = predict.glm(Best_High_Cholesterol, newdata = eville, type = "response") * Pop_18_and,
+                            Difference_From_Average_High_Cholesterol = predict.glm(Best_High_Cholesterol, newdata = eville, type = "response") - mean(df_final$high_cholesterol))
+
 
 #' Find correct ggplot to return
 #'
@@ -210,7 +362,7 @@ eville <- eville %>% mutate(Proportion_Smokers = predict.glm(Best_Smoking, newda
 #' @export
 prediction_map <- function(input1,input2) {
   if(input1 == "Smoking" & input2 == "Predicted Proportion") { return(ggmap(evv_map) +
-                                                                        geom_sf(aes(fill = Proportion_Smokers),
+                                                                        geom_sf(aes(fill = Proportion_Smokers, geometry = geometry),
                                                                                 inherit.aes=FALSE,
                                                                                 alpha = .75,
                                                                                 data = eville) +
@@ -222,10 +374,11 @@ prediction_map <- function(input1,input2) {
                                                                               axis.title.x = element_blank(),
                                                                               axis.title.y = element_blank()
                                                                         )
-  )
+                                                                      )
   }
+
   if(input1 == "Smoking" & input2 == "Predicted Number of People") { return(ggmap(evv_map) +
-                                                                              geom_sf(aes(fill = Predicted_Number_Smokers),
+                                                                              geom_sf(aes(fill = Predicted_Number_Smokers, geometry = geometry),
                                                                                       inherit.aes=FALSE,
                                                                                       alpha = .75,
                                                                                       data = eville) +
@@ -237,10 +390,11 @@ prediction_map <- function(input1,input2) {
                                                                                     axis.title.x = element_blank(),
                                                                                     axis.title.y = element_blank()
                                                                               )
-  )
+                                                                            )
   }
+
   if(input1 == "Smoking" & input2 == "Predicted Difference From Indiana Average") { return(ggmap(evv_map) +
-                                                                                             geom_sf(aes(fill = Difference_From_Average_Smokers),
+                                                                                             geom_sf(aes(fill = Difference_From_Average_Smokers, geometry = geometry),
                                                                                                      inherit.aes=FALSE,
                                                                                                      alpha = .75,
                                                                                                      data = eville) +
@@ -252,10 +406,11 @@ prediction_map <- function(input1,input2) {
                                                                                                    axis.title.x = element_blank(),
                                                                                                    axis.title.y = element_blank()
                                                                                              )
-  )
+                                                                                           )
   }
+
   if(input1 == "Overweight" & input2 == "Predicted Proportion") { return(ggmap(evv_map) +
-                                                                           geom_sf(aes(fill = Proportion_Overweight),
+                                                                           geom_sf(aes(fill = Proportion_Overweight, geometry = geometry),
                                                                                    inherit.aes=FALSE,
                                                                                    alpha = .75,
                                                                                    data = eville) +
@@ -267,10 +422,11 @@ prediction_map <- function(input1,input2) {
                                                                                  axis.title.x = element_blank(),
                                                                                  axis.title.y = element_blank()
                                                                            )
-  )
+                                                                         )
   }
+
   if(input1 == "Overweight" & input2 == "Predicted Number of People") { return(ggmap(evv_map) +
-                                                                                 geom_sf(aes(fill = Predicted_Number_Overweight),
+                                                                                 geom_sf(aes(fill = Predicted_Number_Overweight, geometry = geometry),
                                                                                          inherit.aes=FALSE,
                                                                                          alpha = .75,
                                                                                          data = eville) +
@@ -282,10 +438,11 @@ prediction_map <- function(input1,input2) {
                                                                                        axis.title.x = element_blank(),
                                                                                        axis.title.y = element_blank()
                                                                                  )
-  )
+                                                                               )
   }
+
   if(input1 == "Overweight" & input2 == "Predicted Difference From Indiana Average") { return(ggmap(evv_map) +
-                                                                                                geom_sf(aes(fill = Difference_From_Average_Overweight),
+                                                                                                geom_sf(aes(fill = Difference_From_Average_Overweight, geometry = geometry),
                                                                                                         inherit.aes=FALSE,
                                                                                                         alpha = .75,
                                                                                                         data = eville) +
@@ -297,6 +454,391 @@ prediction_map <- function(input1,input2) {
                                                                                                       axis.title.x = element_blank(),
                                                                                                       axis.title.y = element_blank()
                                                                                                 )
-  )
+                                                                                              )
   }
+
+  if(input1 == "Asthma" & input2 == "Predicted Proportion") { return(ggmap(evv_map) +
+                                                                       geom_sf(aes(fill = Proportion_Asthma, geometry = geometry),
+                                                                               inherit.aes=FALSE,
+                                                                               alpha = .75,
+                                                                               data = eville) +
+                                                                       scale_fill_viridis_c(option = "B") +
+                                                                       ggtitle("Predicted Proportion of Asthmatics") +
+                                                                       theme(plot.title = element_text(size = rel(1.3)),
+                                                                             axis.text.x = element_blank(),
+                                                                             axis.text.y = element_blank(),
+                                                                             axis.title.x = element_blank(),
+                                                                             axis.title.y = element_blank()
+                                                                       )
+                                                                     )
+  }
+
+  if(input1 == "Asthma" & input2 == "Predicted Number of People") { return(ggmap(evv_map) +
+                                                                             geom_sf(aes(fill = Predicted_Number_Asthma, geometry = geometry),
+                                                                                     inherit.aes=FALSE,
+                                                                                     alpha = .75,
+                                                                                     data = eville) +
+                                                                             scale_fill_viridis_c(option = "B") +
+                                                                             ggtitle("Predicted Number of Asthmatic Citizens") +
+                                                                             theme(plot.title = element_text(size = rel(1.3)),
+                                                                                   axis.text.x = element_blank(),
+                                                                                   axis.text.y = element_blank(),
+                                                                                   axis.title.x = element_blank(),
+                                                                                   axis.title.y = element_blank()
+                                                                             )
+                                                                           )
+  }
+
+  if(input1 == "Asthma" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
+                                                                                            geom_sf(aes(fill = Difference_from_Average_Asthma, geometry = geometry),
+                                                                                                    inherit.aes=FALSE,
+                                                                                                    alpha = .75,
+                                                                                                    data = eville) +
+                                                                                            scale_fill_viridis_c(option = "B") +
+                                                                                            ggtitle("Difference from Average for Asthmatics") +
+                                                                                            theme(plot.title = element_text(size = rel(1.3)),
+                                                                                                  axis.text.x = element_blank(),
+                                                                                                  axis.text.y = element_blank(),
+                                                                                                  axis.title.x = element_blank(),
+                                                                                                  axis.title.y = element_blank()
+                                                                                            )
+                                                                                          )
+  }
+
+  if(input1 == "Binge Drinking" & input2 == "Predicted Proportion") { return(ggmap(evv_map) +
+                                                                               geom_sf(aes(fill = Proportion_Binge, geometry = geometry),
+                                                                                       inherit.aes=FALSE,
+                                                                                       alpha = .75,
+                                                                                       data = eville) +
+                                                                               scale_fill_viridis_c(option = "B") +
+                                                                               ggtitle("Predicted Proportion of Binge Drinkers") +
+                                                                               theme(plot.title = element_text(size = rel(1.3)),
+                                                                                     axis.text.x = element_blank(),
+                                                                                     axis.text.y = element_blank(),
+                                                                                     axis.title.x = element_blank(),
+                                                                                     axis.title.y = element_blank()
+                                                                               )
+                                                                             )
+  }
+
+  if(input1 == "Binge Drinking" & input2 == "Predicted Number of People") { return(ggmap(evv_map) +
+                                                                                     geom_sf(aes(fill = Predicted_Number_Binge, geometry = geometry),
+                                                                                             inherit.aes=FALSE,
+                                                                                             alpha = .75,
+                                                                                             data = eville) +
+                                                                                     scale_fill_viridis_c(option = "B") +
+                                                                                     ggtitle("Predicted Number of Binge Drinkers") +
+                                                                                     theme(plot.title = element_text(size = rel(1.3)),
+                                                                                           axis.text.x = element_blank(),
+                                                                                           axis.text.y = element_blank(),
+                                                                                           axis.title.x = element_blank(),
+                                                                                           axis.title.y = element_blank()
+                                                                                     )
+                                                                                   )
+  }
+
+  if(input1 == "Binge Drinkers" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
+                                                                                                    geom_sf(aes(fill = Difference_from_Average_Binge, geometry = geometry),
+                                                                                                            inherit.aes=FALSE,
+                                                                                                            alpha = .75,
+                                                                                                            data = eville) +
+                                                                                                    scale_fill_viridis_c(option = "B") +
+                                                                                                    ggtitle("Difference from Average for Binge Drinkers") +
+                                                                                                    theme(plot.title = element_text(size = rel(1.3)),
+                                                                                                          axis.text.x = element_blank(),
+                                                                                                          axis.text.y = element_blank(),
+                                                                                                          axis.title.x = element_blank(),
+                                                                                                          axis.title.y = element_blank()
+                                                                                                    )
+                                                                                                  )
+  }
+
+  if(input1 == "Arthritis" & input2 == "Predicted Proportion") { return(ggmap(evv_map) +
+                                                                         geom_sf(aes(fill = Proportion_Arthritis, geometry = geometry),
+                                                                                 inherit.aes=FALSE,
+                                                                                 alpha = .75,
+                                                                                 data = eville) +
+                                                                         scale_fill_viridis_c(option = "B") +
+                                                                         ggtitle("Predicted Proportion of Citizens with Arthritis") +
+                                                                         theme(plot.title = element_text(size = rel(1.3)),
+                                                                               axis.text.x = element_blank(),
+                                                                               axis.text.y = element_blank(),
+                                                                               axis.title.x = element_blank(),
+                                                                               axis.title.y = element_blank()
+                                                                         )
+                                                                       )
+  }
+
+  if(input1 == "Arthritis" & input2 == "Predicted Number of People") { return(ggmap(evv_map) +
+                                                                               geom_sf(aes(fill = Predicted_Number_Arthritis, geometry = geometry),
+                                                                                       inherit.aes=FALSE,
+                                                                                       alpha = .75,
+                                                                                       data = eville) +
+                                                                               scale_fill_viridis_c(option = "B") +
+                                                                               ggtitle("Predicted Number of Citizens with Arthritis") +
+                                                                               theme(plot.title = element_text(size = rel(1.3)),
+                                                                                     axis.text.x = element_blank(),
+                                                                                     axis.text.y = element_blank(),
+                                                                                     axis.title.x = element_blank(),
+                                                                                     axis.title.y = element_blank()
+                                                                               )
+                                                                              )
+  }
+
+  if(input1 == "Arthritis" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
+                                                                                              geom_sf(aes(fill = Difference_from_Average_Arthritis, geometry = geometry),
+                                                                                                      inherit.aes=FALSE,
+                                                                                                      alpha = .75,
+                                                                                                      data = eville) +
+                                                                                              scale_fill_viridis_c(option = "B") +
+                                                                                              ggtitle("Difference from Average for Arthritis") +
+                                                                                              theme(plot.title = element_text(size = rel(1.3)),
+                                                                                                    axis.text.x = element_blank(),
+                                                                                                    axis.text.y = element_blank(),
+                                                                                                    axis.title.x = element_blank(),
+                                                                                                    axis.title.y = element_blank()
+                                                                                              )
+                                                                                             )
+  }
+
+  if(input1 == "High Blood Pressure" & input2 == "Predicted Proportion") { return(ggmap(evv_map) +
+                                                                                    geom_sf(aes(fill = Proportion_High_BP, geometry = geometry),
+                                                                                            inherit.aes=FALSE,
+                                                                                            alpha = .75,
+                                                                                            data = eville) +
+                                                                                    scale_fill_viridis_c(option = "B") +
+                                                                                    ggtitle("Predicted Proportion of Citizens with High Blood Pressure") +
+                                                                                    theme(plot.title = element_text(size = rel(1.3)),
+                                                                                          axis.text.x = element_blank(),
+                                                                                          axis.text.y = element_blank(),
+                                                                                          axis.title.x = element_blank(),
+                                                                                          axis.title.y = element_blank()
+                                                                                    )
+                                                                                  )
+  }
+
+  if(input1 == "High Blood Pressure" & input2 == "Predicted Number of People") { return(ggmap(evv_map) +
+                                                                                          geom_sf(aes(fill = Predicted_Number_High_BP, geometry = geometry),
+                                                                                                  inherit.aes=FALSE,
+                                                                                                  alpha = .75,
+                                                                                                  data = eville) +
+                                                                                          scale_fill_viridis_c(option = "B") +
+                                                                                          ggtitle("Predicted Number of Citizens with High Blood Pressure") +
+                                                                                          theme(plot.title = element_text(size = rel(1.3)),
+                                                                                                axis.text.x = element_blank(),
+                                                                                                axis.text.y = element_blank(),
+                                                                                                axis.title.x = element_blank(),
+                                                                                                axis.title.y = element_blank()
+                                                                                          )
+                                                                                        )
+  }
+
+  if(input1 == "High Blood Pressure" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
+                                                                                                         geom_sf(aes(fill = Difference_from_Average_High_BP, geometry = geometry),
+                                                                                                                 inherit.aes=FALSE,
+                                                                                                                 alpha = .75,
+                                                                                                                 data = eville) +
+                                                                                                         scale_fill_viridis_c(option = "B") +
+                                                                                                         ggtitle("Difference from Average for Citizens with High Blood Pressure") +
+                                                                                                         theme(plot.title = element_text(size = rel(1.3)),
+                                                                                                               axis.text.x = element_blank(),
+                                                                                                               axis.text.y = element_blank(),
+                                                                                                               axis.title.x = element_blank(),
+                                                                                                               axis.title.y = element_blank()
+                                                                                                         )
+                                                                                                       )
+  }
+
+  if(input1 == "Angina or Coronary Heart Disease" & input2 == "Predicted Proportion") { return(ggmap(evv_map) +
+                                                                                                 geom_sf(aes(fill = Proportion_Angina, geometry = geometry),
+                                                                                                         inherit.aes=FALSE,
+                                                                                                         alpha = .75,
+                                                                                                         data = eville) +
+                                                                                                 scale_fill_viridis_c(option = "B") +
+                                                                                                 ggtitle("Predicted Proportion of Citizens with Angina or Coronary Heart Disease") +
+                                                                                                 theme(plot.title = element_text(size = rel(1.3)),
+                                                                                                       axis.text.x = element_blank(),
+                                                                                                       axis.text.y = element_blank(),
+                                                                                                       axis.title.x = element_blank(),
+                                                                                                       axis.title.y = element_blank()
+                                                                                                 )
+                                                                                               )
+  }
+
+  if(input1 == "Angina or Coronary Heart Disease" & input2 == "Predicted Number of People") { return(ggmap(evv_map) +
+                                                                                                       geom_sf(aes(fill = Predicted_Number_Angina, geometry = geometry),
+                                                                                                               inherit.aes=FALSE,
+                                                                                                               alpha = .75,
+                                                                                                               data = eville) +
+                                                                                                       scale_fill_viridis_c(option = "B") +
+                                                                                                       ggtitle("Predicted Number of Citizens with Angina or Coronary Heart Disease") +
+                                                                                                       theme(plot.title = element_text(size = rel(1.3)),
+                                                                                                             axis.text.x = element_blank(),
+                                                                                                             axis.text.y = element_blank(),
+                                                                                                             axis.title.x = element_blank(),
+                                                                                                             axis.title.y = element_blank()
+                                                                                                       )
+                                                                                                     )
+  }
+
+  if(input1 == "Angina or Coronary Heart Disease" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
+                                                                                                                      geom_sf(aes(fill = Difference_From_Average_Angina, geometry = geometry),
+                                                                                                                              inherit.aes=FALSE,
+                                                                                                                              alpha = .75,
+                                                                                                                              data = eville) +
+                                                                                                                      scale_fill_viridis_c(option = "B") +
+                                                                                                                      ggtitle("Difference from Average for Citizens with Angina or Coronary Heart Disease") +
+                                                                                                                      theme(plot.title = element_text(size = rel(1.3)),
+                                                                                                                            axis.text.x = element_blank(),
+                                                                                                                            axis.text.y = element_blank(),
+                                                                                                                            axis.title.x = element_blank(),
+                                                                                                                            axis.title.y = element_blank()
+                                                                                                                      )
+                                                                                                                    )
+  }
+
+  if(input1 == "Depression" & input2 == "Predicted Proportion") { return(ggmap(evv_map) +
+                                                                           geom_sf(aes(fill = Proportion_Depression, geometry = geometry),
+                                                                                   inherit.aes=FALSE,
+                                                                                   alpha = .75,
+                                                                                   data = eville) +
+                                                                           scale_fill_viridis_c(option = "B") +
+                                                                           ggtitle("Predicted Proportion of Citizens with Depression") +
+                                                                           theme(plot.title = element_text(size = rel(1.3)),
+                                                                                 axis.text.x = element_blank(),
+                                                                                 axis.text.y = element_blank(),
+                                                                                 axis.title.x = element_blank(),
+                                                                                 axis.title.y = element_blank()
+                                                                           )
+                                                                         )
+  }
+
+  if(input1 == "Depression" & input2 == "Predicted Number of People") { return(ggmap(evv_map) +
+                                                                                 geom_sf(aes(fill = Predicted_Number_Depression, geometry = geometry),
+                                                                                         inherit.aes=FALSE,
+                                                                                         alpha = .75,
+                                                                                         data = eville) +
+                                                                                 scale_fill_viridis_c(option = "B") +
+                                                                                 ggtitle("Predicted Number of Citizens with Depression") +
+                                                                                 theme(plot.title = element_text(size = rel(1.3)),
+                                                                                       axis.text.x = element_blank(),
+                                                                                       axis.text.y = element_blank(),
+                                                                                       axis.title.x = element_blank(),
+                                                                                       axis.title.y = element_blank()
+                                                                                 )
+                                                                               )
+  }
+
+  if(input1 == "Depression" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
+                                                                                                geom_sf(aes(fill = Difference_From_Average_Depression, geometry = geometry),
+                                                                                                        inherit.aes=FALSE,
+                                                                                                        alpha = .75,
+                                                                                                        data = eville) +
+                                                                                                scale_fill_viridis_c(option = "B") +
+                                                                                                ggtitle("Difference from Average for Citizens with Depression") +
+                                                                                                theme(plot.title = element_text(size = rel(1.3)),
+                                                                                                      axis.text.x = element_blank(),
+                                                                                                      axis.text.y = element_blank(),
+                                                                                                      axis.title.x = element_blank(),
+                                                                                                      axis.title.y = element_blank()
+                                                                                                )
+                                                                                              )
+  }
+
+  if(input1 == "High Cholesterol" & input2 == "Predicted Proportion") { return(ggmap(evv_map) +
+                                                                                 geom_sf(aes(fill = Proportion_High_Cholesterol, geometry = geometry),
+                                                                                         inherit.aes=FALSE,
+                                                                                         alpha = .75,
+                                                                                         data = eville) +
+                                                                                 scale_fill_viridis_c(option = "B") +
+                                                                                 ggtitle("Predicted Proportion of Citizens with High Cholesterol") +
+                                                                                 theme(plot.title = element_text(size = rel(1.3)),
+                                                                                       axis.text.x = element_blank(),
+                                                                                       axis.text.y = element_blank(),
+                                                                                       axis.title.x = element_blank(),
+                                                                                       axis.title.y = element_blank()
+                                                                                 )
+                                                                               )
+  }
+
+  if(input1 == "High Cholesterol" & input2 == "Predicted Number of People") { return(ggmap(evv_map) +
+                                                                                       geom_sf(aes(fill = Predicted_Number_High_Cholesterol, geometry = geometry),
+                                                                                               inherit.aes=FALSE,
+                                                                                               alpha = .75,
+                                                                                               data = eville) +
+                                                                                       scale_fill_viridis_c(option = "B") +
+                                                                                       ggtitle("Predicted Number of Citizens with High Cholesterol") +
+                                                                                       theme(plot.title = element_text(size = rel(1.3)),
+                                                                                             axis.text.x = element_blank(),
+                                                                                             axis.text.y = element_blank(),
+                                                                                             axis.title.x = element_blank(),
+                                                                                             axis.title.y = element_blank()
+                                                                                       )
+                                                                                     )
+  }
+
+  if(input1 == "High Cholesterol" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
+                                                                                                      geom_sf(aes(fill = Difference_From_Average_High_Cholesterol, geometry = geometry),
+                                                                                                              inherit.aes=FALSE,
+                                                                                                              alpha = .75,
+                                                                                                              data = eville) +
+                                                                                                      scale_fill_viridis_c(option = "B") +
+                                                                                                      ggtitle("Difference from Average for Citizens with High Cholesterol") +
+                                                                                                      theme(plot.title = element_text(size = rel(1.3)),
+                                                                                                            axis.text.x = element_blank(),
+                                                                                                            axis.text.y = element_blank(),
+                                                                                                            axis.title.x = element_blank(),
+                                                                                                            axis.title.y = element_blank()
+                                                                                                      )
+                                                                                                    )
+  }
+
+  if(input1 == "Diabetes" & input2 == "Predicted Proportion") { return(ggmap(evv_map) +
+                                                                         geom_sf(aes(fill = Proportion_Diabetes, geometry = geometry),
+                                                                                 inherit.aes=FALSE,
+                                                                                 alpha = .75,
+                                                                                 data = eville) +
+                                                                         scale_fill_viridis_c(option = "B") +
+                                                                         ggtitle("Predicted Proportion of Citizens with Diabetes") +
+                                                                         theme(plot.title = element_text(size = rel(1.3)),
+                                                                               axis.text.x = element_blank(),
+                                                                               axis.text.y = element_blank(),
+                                                                               axis.title.x = element_blank(),
+                                                                               axis.title.y = element_blank()
+                                                                         )
+                                                                       )
+  }
+
+  if(input1 == "Diabetes" & input2 == "Predicted Number of People") { return(ggmap(evv_map) +
+                                                                               geom_sf(aes(fill = Predicted_Number_Diabetes, geometry = geometry),
+                                                                                       inherit.aes=FALSE,
+                                                                                       alpha = .75,
+                                                                                       data = eville) +
+                                                                               scale_fill_viridis_c(option = "B") +
+                                                                               ggtitle("Predicted Number of Citizens with Diabetes") +
+                                                                               theme(plot.title = element_text(size = rel(1.3)),
+                                                                                     axis.text.x = element_blank(),
+                                                                                     axis.text.y = element_blank(),
+                                                                                     axis.title.x = element_blank(),
+                                                                                     axis.title.y = element_blank()
+                                                                               )
+                                                                             )
+  }
+
+  if(input1 == "Diabetes" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
+                                                                                              geom_sf(aes(fill = Difference_From_Average_Diabetes, geometry = geometry),
+                                                                                                      inherit.aes=FALSE,
+                                                                                                      alpha = .75,
+                                                                                                      data = eville) +
+                                                                                              scale_fill_viridis_c(option = "B") +
+                                                                                              ggtitle("Difference from Average for Citizens with Diabetes") +
+                                                                                              theme(plot.title = element_text(size = rel(1.3)),
+                                                                                                    axis.text.x = element_blank(),
+                                                                                                    axis.text.y = element_blank(),
+                                                                                                    axis.title.x = element_blank(),
+                                                                                                    axis.title.y = element_blank()
+                                                                                              )
+                                                                                            )
+  }
+
 }
