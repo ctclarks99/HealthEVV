@@ -423,34 +423,34 @@ eville <- eville %>% mutate(white = White_NH / Pop_18_and,
 #' @export
 eville <- eville %>% mutate(Proportion_Smokers = predict.glm(Best_Smoking, newdata = eville, type = "response"),
                             Predicted_Number_Smokers = predict.glm(Best_Smoking, newdata = eville, type = "response") * Pop_18_and,
-                            Difference_From_Average_Smokers = predict.glm(Best_Smoking, newdata = eville, type = "response") - mean(df_final$smoke),
+                            Difference_From_Average_Smokers = (predict.glm(Best_Smoking, newdata = eville, type = "response") - mean(df_final$smoke)),
                             Proportion_Overweight = predict.glm(Best_Overweight, newdata = eville, type = "response"),
                             Predicted_Number_Overweight = predict.glm(Best_Overweight, newdata = eville, type = "response") * Pop_18_and,
-                            Difference_From_Average_Overweight = predict.glm(Best_Overweight, newdata = eville, type = "response") - mean(df_final$overweight),
+                            Difference_From_Average_Overweight = (predict.glm(Best_Overweight, newdata = eville, type = "response") - mean(df_final$overweight)),
                             Proportion_Asthma = predict.glm(Best_Asthma, newdata = eville, type = "response"),
                             Predicted_Number_Asthma = predict.glm(Best_Asthma, newdata = eville, type = "response") * Pop_18_and,
-                            Difference_From_Average_Asthma = predict.glm(Best_Asthma, newdata = eville, type = "response") - mean(df_final$asthma),
+                            Difference_From_Average_Asthma = (predict.glm(Best_Asthma, newdata = eville, type = "response") - mean(df_final$asthma)),
                             Proportion_Binge = predict.glm(Best_Binge_Drinker, newdata = eville, type = "response"),
                             Predicted_Number_Binge = predict.glm(Best_Binge_Drinker, newdata = eville, type = "response") * Pop_18_and,
-                            Difference_From_Average_Binge = predict.glm(Best_Binge_Drinker, newdata = eville, type = "response") - mean(df_final$binge_drinker),
+                            Difference_From_Average_Binge = (predict.glm(Best_Binge_Drinker, newdata = eville, type = "response") - mean(df_final$binge_drinker)),
                             Proportion_Arthritis = predict.glm(Best_Arthritis, newdata = eville, type = "response"),
                             Predicted_Number_Arthritis = predict.glm(Best_Arthritis, newdata = eville, type = "response") * Pop_18_and,
-                            Difference_From_Average_Arthritis = predict.glm(Best_Arthritis, newdata = eville, type = "response") - mean(df_final$arthritis),
+                            Difference_From_Average_Arthritis = (predict.glm(Best_Arthritis, newdata = eville, type = "response") - mean(df_final$arthritis)),
                             Proportion_High_BP = predict.glm(Best_High_Blood_Pressure, newdata = eville, type = "response"),
                             Predicted_Number_High_BP = predict.glm(Best_High_Blood_Pressure, newdata = eville, type = "response") * Pop_18_and,
-                            Difference_From_Average_High_BP = predict.glm(Best_High_Blood_Pressure, newdata = eville, type = "response") - mean(df_final$high_blood_pressure),
+                            Difference_From_Average_High_BP = (predict.glm(Best_High_Blood_Pressure, newdata = eville, type = "response") - mean(df_final$high_blood_pressure)),
                             Proportion_Angina = predict.glm(Best_Angina_Coronary, newdata = eville, type = "response"),
                             Predicted_Number_Angina = predict.glm(Best_Angina_Coronary, newdata = eville, type = "response") * Pop_18_and,
-                            Difference_From_Average_Angina = predict.glm(Best_Angina_Coronary, newdata = eville, type = "response") - mean(df_final$angina),
+                            Difference_From_Average_Angina = (predict.glm(Best_Angina_Coronary, newdata = eville, type = "response") - mean(df_final$angina)),
                             Proportion_Depression = predict.glm(Best_Depression, newdata = eville, type = "response"),
                             Predicted_Number_Depression = predict.glm(Best_Depression, newdata = eville, type = "response") * Pop_18_and,
-                            Difference_From_Average_Depression = predict.glm(Best_Depression, newdata = eville, type = "response") - mean(df_final$depression),
+                            Difference_From_Average_Depression = (predict.glm(Best_Depression, newdata = eville, type = "response") - mean(df_final$depression)),
                             Proportion_Diabetes = predict.glm(Best_Diabetes, newdata = eville, type = "response"),
                             Predicted_Number_Diabetes = predict.glm(Best_Diabetes, newdata = eville, type = "response") * Pop_18_and,
-                            Difference_From_Average_Diabetes = predict.glm(Best_Diabetes, newdata = eville, type = "response") - mean(df_final$diabetic),
+                            Difference_From_Average_Diabetes = (predict.glm(Best_Diabetes, newdata = eville, type = "response") - mean(df_final$diabetic)),
                             Proportion_High_Cholesterol = predict.glm(Best_High_Cholesterol, newdata = eville, type = "response"),
                             Predicted_Number_High_Cholesterol = predict.glm(Best_High_Cholesterol, newdata = eville, type = "response") * Pop_18_and,
-                            Difference_From_Average_High_Cholesterol = predict.glm(Best_High_Cholesterol, newdata = eville, type = "response") - mean(df_final$high_cholesterol))
+                            Difference_From_Average_High_Cholesterol = (predict.glm(Best_High_Cholesterol, newdata = eville, type = "response") - mean(df_final$high_cholesterol)))
 
 
 #' Find correct ggplot to return
@@ -500,7 +500,7 @@ prediction_map <- function(input1,input2) {
                                                                                                      alpha = .75,
                                                                                                      data = eville) +
                                                                                              scale_fill_viridis_c(option = "B") +
-                                                                                             ggtitle("diff from average smoking") +
+                                                                                             ggtitle("Difference from Average for Smoking") +
                                                                                              theme(plot.title = element_text(size = rel(1.3)),
                                                                                                    axis.text.x = element_blank(),
                                                                                                    axis.text.y = element_blank(),
@@ -548,7 +548,7 @@ prediction_map <- function(input1,input2) {
                                                                                                         alpha = .75,
                                                                                                         data = eville) +
                                                                                                 scale_fill_viridis_c(option = "B") +
-                                                                                                ggtitle("diff from average overweight") +
+                                                                                                ggtitle("Difference from Average for Overweight") +
                                                                                                 theme(plot.title = element_text(size = rel(1.3)),
                                                                                                       axis.text.x = element_blank(),
                                                                                                       axis.text.y = element_blank(),
