@@ -653,7 +653,7 @@ prediction_map <- function(input1,input2) {
                                                                                    )
   }
 
-  if(input1 == "Binge Drinkers" & input2 == "Predicted Difference From Indiana Average") { return(ggmap(evv_map) +
+  if(input1 == "Binge Drinking" & input2 == "Predicted Difference From Indiana Average") { return(ggmap(evv_map) +
                                                                                                     geom_sf(aes(fill = Difference_From_Average_Binge, geometry = geometry),
                                                                                                             inherit.aes=FALSE,
                                                                                                             alpha = .75,
