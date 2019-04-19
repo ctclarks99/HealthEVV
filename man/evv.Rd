@@ -4,7 +4,7 @@
 \name{evv}
 \alias{evv}
 \title{Reading}
-\format{An object of class \code{data.frame} with 49 rows and 53 columns.}
+\format{An object of class \code{data.frame} with 49 rows and 2 columns.}
 \usage{
 evv
 

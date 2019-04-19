@@ -3,28 +3,12 @@
 \docType{data}
 \name{Census_data}
 \alias{Census_data}
-\title{Full Census}
-\format{An object of class \code{data.frame} with 49 rows and 16 columns.}
+\title{Import census data to save time}
+\format{An object of class \code{data.frame} with 49 rows and 23 columns.}
 \usage{
-Census_data
-
-Census_data
-
-Census_data
-
-Census_data
-
 Census_data
 }
 \description{
-Full Census
-
-Joining Sex
-
-Census Join Income
-
-Join Census and Age Data
-
-Census Interaction Join
+Import census data to save time
 }
 \keyword{datasets}
