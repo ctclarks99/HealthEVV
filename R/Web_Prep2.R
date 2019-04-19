@@ -604,11 +604,12 @@ prediction_map <- function(input1,input2) {
                                                                            )
   }
 
-  if(input1 == "Asthma" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
-                                                                                            geom_sf(aes(fill = Difference_From_Average_Asthma, geometry = geometry),
-                                                                                                    inherit.aes=FALSE,
-                                                                                                    alpha = .75,
-                                                                                                    data = eville) +
+  if(input1 == "Asthma" & input2 == "Predicted Difference From Indiana Average") { return(ggmap(evv_map) +
+                                                                                            geom_sf(aes(fill = Difference_From_Average_Asthma,
+                                                                                                        geometry = geometry),
+                                                                                                        inherit.aes=FALSE,
+                                                                                                        alpha = .75,
+                                                                                                        data = eville) +
                                                                                             scale_fill_viridis_c(option = "B") +
                                                                                             ggtitle("Difference from Average for Asthmatics") +
                                                                                             theme(plot.title = element_text(size = rel(1.3)),
@@ -652,7 +653,7 @@ prediction_map <- function(input1,input2) {
                                                                                    )
   }
 
-  if(input1 == "Binge Drinkers" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
+  if(input1 == "Binge Drinkers" & input2 == "Predicted Difference From Indiana Average") { return(ggmap(evv_map) +
                                                                                                     geom_sf(aes(fill = Difference_From_Average_Binge, geometry = geometry),
                                                                                                             inherit.aes=FALSE,
                                                                                                             alpha = .75,
@@ -700,7 +701,7 @@ prediction_map <- function(input1,input2) {
                                                                               )
   }
 
-  if(input1 == "Arthritis" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
+  if(input1 == "Arthritis" & input2 == "Predicted Difference From Indiana Average") { return(ggmap(evv_map) +
                                                                                               geom_sf(aes(fill = Difference_From_Average_Arthritis, geometry = geometry),
                                                                                                       inherit.aes=FALSE,
                                                                                                       alpha = .75,
@@ -748,7 +749,7 @@ prediction_map <- function(input1,input2) {
                                                                                         )
   }
 
-  if(input1 == "High Blood Pressure" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
+  if(input1 == "High Blood Pressure" & input2 == "Predicted Difference From Indiana Average") { return(ggmap(evv_map) +
                                                                                                          geom_sf(aes(fill = Difference_From_Average_High_BP, geometry = geometry),
                                                                                                                  inherit.aes=FALSE,
                                                                                                                  alpha = .75,
@@ -796,7 +797,7 @@ prediction_map <- function(input1,input2) {
                                                                                                      )
   }
 
-  if(input1 == "Angina or Coronary Heart Disease" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
+  if(input1 == "Angina or Coronary Heart Disease" & input2 == "Predicted Difference From Indiana Average") { return(ggmap(evv_map) +
                                                                                                                       geom_sf(aes(fill = Difference_From_Average_Angina, geometry = geometry),
                                                                                                                               inherit.aes=FALSE,
                                                                                                                               alpha = .75,
@@ -844,7 +845,7 @@ prediction_map <- function(input1,input2) {
                                                                                )
   }
 
-  if(input1 == "Depression" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
+  if(input1 == "Depression" & input2 == "Predicted Difference From Indiana Average") { return(ggmap(evv_map) +
                                                                                                 geom_sf(aes(fill = Difference_From_Average_Depression, geometry = geometry),
                                                                                                         inherit.aes=FALSE,
                                                                                                         alpha = .75,
@@ -892,7 +893,7 @@ prediction_map <- function(input1,input2) {
                                                                                      )
   }
 
-  if(input1 == "High Cholesterol" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
+  if(input1 == "High Cholesterol" & input2 == "Predicted Difference From Indiana Average") { return(ggmap(evv_map) +
                                                                                                       geom_sf(aes(fill = Difference_From_Average_High_Cholesterol, geometry = geometry),
                                                                                                               inherit.aes=FALSE,
                                                                                                               alpha = .75,
@@ -940,7 +941,7 @@ prediction_map <- function(input1,input2) {
                                                                              )
   }
 
-  if(input1 == "Diabetes" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
+  if(input1 == "Diabetes" & input2 == "Predicted Difference From Indiana Average") { return(ggmap(evv_map) +
                                                                                               geom_sf(aes(fill = Difference_From_Average_Diabetes, geometry = geometry),
                                                                                                       inherit.aes=FALSE,
                                                                                                       alpha = .75,
