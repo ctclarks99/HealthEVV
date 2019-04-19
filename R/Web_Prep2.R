@@ -460,6 +460,8 @@ eville <- eville %>% mutate(Proportion_Smokers = predict.glm(Best_Smoking, newda
 #' @param input2 Selected plot type from shiny UI
 #' @return correct ggplot
 #' @export
+#' @importFrom ggplot2 scale_fill_viridis_c ggtitle theme
+#' @importFrom ggmap ggmap
 prediction_map <- function(input1,input2) {
   if(input1 == "Smoking" & input2 == "Predicted Proportion") { return(ggmap(evv_map) +
                                                                         geom_sf(aes(fill = Proportion_Smokers, geometry = geometry),
@@ -590,7 +592,7 @@ prediction_map <- function(input1,input2) {
   }
 
   if(input1 == "Asthma" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
-                                                                                            geom_sf(aes(fill = Difference_from_Average_Asthma, geometry = geometry),
+                                                                                            geom_sf(aes(fill = Difference_From_Average_Asthma, geometry = geometry),
                                                                                                     inherit.aes=FALSE,
                                                                                                     alpha = .75,
                                                                                                     data = eville) +
@@ -638,7 +640,7 @@ prediction_map <- function(input1,input2) {
   }
 
   if(input1 == "Binge Drinkers" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
-                                                                                                    geom_sf(aes(fill = Difference_from_Average_Binge, geometry = geometry),
+                                                                                                    geom_sf(aes(fill = Difference_From_Average_Binge, geometry = geometry),
                                                                                                             inherit.aes=FALSE,
                                                                                                             alpha = .75,
                                                                                                             data = eville) +
@@ -686,7 +688,7 @@ prediction_map <- function(input1,input2) {
   }
 
   if(input1 == "Arthritis" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
-                                                                                              geom_sf(aes(fill = Difference_from_Average_Arthritis, geometry = geometry),
+                                                                                              geom_sf(aes(fill = Difference_From_Average_Arthritis, geometry = geometry),
                                                                                                       inherit.aes=FALSE,
                                                                                                       alpha = .75,
                                                                                                       data = eville) +
@@ -734,7 +736,7 @@ prediction_map <- function(input1,input2) {
   }
 
   if(input1 == "High Blood Pressure" & input2 == "Predicted Difference from Indiana Average") { return(ggmap(evv_map) +
-                                                                                                         geom_sf(aes(fill = Difference_from_Average_High_BP, geometry = geometry),
+                                                                                                         geom_sf(aes(fill = Difference_From_Average_High_BP, geometry = geometry),
                                                                                                                  inherit.aes=FALSE,
                                                                                                                  alpha = .75,
                                                                                                                  data = eville) +
