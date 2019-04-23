@@ -103,11 +103,14 @@ evv_map <- get_map(evansville, maptype = "roadmap")
 #' Reading
 #' @importFrom sf st_read st_transform
 evv <- st_read("Census_Tracts.shp")
+
 #' Transform
 evv <- st_transform(evv, crs = "+proj=longlat +datumWGS84 +no_defs +ellps=WGS84")
+
 #' Frame
 #' @importFrom dplyr filter select group_by left_join summarise transmute
-evv <- data.frame(evv) %>% transmute(geometry, GEOID = as.character(GEOID10))
+evv <- data.frame(evv) %>% transmute(GEOID = as.character(GEOID10), geometry)
+
 
 #' Complete Data Frame
 eville <- evv %>% left_join(Census_data, by = "GEOID")
