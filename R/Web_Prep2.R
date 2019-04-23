@@ -90,6 +90,11 @@ Best_Angina_Coronary <- glm(angina ~ male + white + black + other_race + poverty
                             data = df_final,
                             family = binomial(link = "logit"))
 
+#' Model_Check
+#'
+#' @export
+check1 <- print("Model Check")
+
 #' Evansville Map
 evansville <- c(left = -87.70264,
                 bottom = 37.83241,
@@ -171,6 +176,10 @@ eville <- eville %>% mutate(Proportion_Smokers = predict.glm(Best_Smoking, newda
                             Predicted_Number_High_Cholesterol = predict.glm(Best_High_Cholesterol, newdata = eville, type = "response") * Pop_18_and,
                             Difference_From_Average_High_Cholesterol = (predict.glm(Best_High_Cholesterol, newdata = eville, type = "response") - mean(df_final$high_cholesterol)))
 
+#' Else Check
+#'
+#' @export
+check2 <- print("Else Check")
 
 #' Find correct ggplot to return
 #'
@@ -179,7 +188,9 @@ eville <- eville %>% mutate(Proportion_Smokers = predict.glm(Best_Smoking, newda
 #' @param input2 Selected plot type from shiny UI
 #' @return correct ggplot
 #' @export
-#' @importFrom ggplot2 scale_fill_viridis_c ggtitle theme
+#' @import ggplot2
+#' @import ggmap
+#' @import sf
 prediction_map <- function(input1,input2) {
   if(input1 == "Smoking" & input2 == "Predicted Proportion") { return(ggmap(evv_map) +
                                                                         geom_sf(aes(fill = Proportion_Smokers, geometry = geometry),
