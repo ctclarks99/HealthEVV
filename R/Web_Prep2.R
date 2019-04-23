@@ -1,6 +1,6 @@
 #' Final Data Frame
 #' @export
-#' @importFrom dplyr %>% mutate
+#' @import dplyr
 df_final <- read.csv(file = "data_final.csv") %>% mutate(white_poverty = white*poverty,
                                                          black_older = black*older,
                                                          poverty_older = poverty*older,
@@ -90,10 +90,6 @@ Best_Angina_Coronary <- glm(angina ~ male + white + black + other_race + poverty
                             data = df_final,
                             family = binomial(link = "logit"))
 
-#' Model_Check
-#'
-#' @export
-check1 <- print("Model Check")
 
 #' Evansville Map
 evansville <- c(left = -87.70264,
@@ -102,18 +98,17 @@ evansville <- c(left = -87.70264,
                 top = 38.20472)
 
 #' Get Map
-#' @importFrom ggmap get_map
+#' @import maps
 evv_map <- get_map(evansville, maptype = "roadmap")
 
 #' Reading
-#' @importFrom sf st_read st_transform
+#' @import sf
 evv <- st_read("Census_Tracts.shp")
 
 #' Transform
 evv <- st_transform(evv, crs = "+proj=longlat +datumWGS84 +no_defs +ellps=WGS84")
 
 #' Frame
-#' @importFrom dplyr filter select group_by left_join summarise transmute
 evv <- data.frame(evv) %>% transmute(GEOID = as.character(GEOID10), geometry)
 
 
@@ -176,10 +171,6 @@ eville <- eville %>% mutate(Proportion_Smokers = predict.glm(Best_Smoking, newda
                             Predicted_Number_High_Cholesterol = predict.glm(Best_High_Cholesterol, newdata = eville, type = "response") * Pop_18_and,
                             Difference_From_Average_High_Cholesterol = (predict.glm(Best_High_Cholesterol, newdata = eville, type = "response") - mean(df_final$high_cholesterol)))
 
-#' Else Check
-#'
-#' @export
-check2 <- print("Else Check")
 
 #' Find correct ggplot to return
 #'
