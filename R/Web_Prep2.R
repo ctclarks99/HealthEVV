@@ -116,17 +116,17 @@ evv <- data.frame(evv) %>% transmute(GEOID = as.character(GEOID10), geometry)
 eville <- evv %>% left_join(Census_data, by = "GEOID")
 
 #' Convert Census Data
-eville <- eville %>% mutate(white = white / Pop_18_and,
+eville <- eville %>% mutate(male = males / Pop_18_and,
+                            white = white / Pop_18_and,
                             black = black / Pop_18_and,
                             asian = asian / Pop_18_and,
                             alaska_indian = alaska_indian / Pop_18_and,
                             hispanic = hispanic / Pop_18_and,
-                            other_race = (asian + alaska_indian + hispanic) / Pop_18_and,
+                            other_race = (asian + alaska_indian + hispanic),
                             male = males / Pop_18_and,
                             poverty = poverty / Pop_18_and,
                             upper_class = upper_class / Pop_18_and,
                             no_GED = no_GED / Pop_18_and,
-                            high_school = high_school_grad / Pop_18_and,
                             college = college / Pop_18_and,
                             young = young / Pop_18_and,
                             older = older / Pop_18_and,
@@ -175,13 +175,12 @@ eville <- eville %>% mutate(Proportion_Smokers = predict.glm(Best_Smoking, newda
 #' Find correct ggplot to return
 #'
 #' Returns ggplot
+#' @import ggplot2
+#' @import ggmap
 #' @param input1 Selected response from shiny UI
 #' @param input2 Selected plot type from shiny UI
 #' @return correct ggplot
 #' @export
-#' @import ggplot2
-#' @import ggmap
-#' @import sf
 prediction_map <- function(input1,input2) {
   if(input1 == "Smoking" & input2 == "Predicted Proportion") { return(ggmap(evv_map) +
                                                                         geom_sf(aes(fill = Proportion_Smokers, geometry = geometry),

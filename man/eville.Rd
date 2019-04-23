@@ -4,7 +4,7 @@
 \name{eville}
 \alias{eville}
 \title{Complete Data Frame}
-\format{An object of class \code{data.frame} with 49 rows and 57 columns.}
+\format{An object of class \code{data.frame} with 49 rows and 56 columns.}
 \usage{
 eville
 
